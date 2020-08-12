@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="error" monitorInterval="30">
+    <properties>
+        <property name="LOG_NAME">zugou-pre-loan</property>
+        <property name="LOG_PATH">/qhapp/apps/${LOG_NAME}/logs</property>
+        <property name="LogPattern">%date{yyyy-MM-dd HH:mm:ss.SSS}|%level|%X|%threadName|%threadId|%c|%m%n</property>
+    </properties>
+    <appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LogPattern}" />
+        </Console>
+        <RollingRandomAccessFile name="InfoFileAppender" fileName="${LOG_PATH}/${LOG_NAME}-info.log"
+                                 filePattern="${LOG_PATH}/$${date:yyyy-MM-dd}/${LOG_NAME}.%d{yyyy-MM-dd}-info.%i.log">
+            <PatternLayout pattern="${LogPattern}" />
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100 MB" />
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+            <DefaultRolloverStrategy min="1" max="20" fileIndex="max" />
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="TimecostAppender" fileName="${LOG_PATH}/${LOG_NAME}-timecost.log"
+                                 filePattern="${LOG_PATH}/$${date:yyyy-MM-dd}/${LOG_NAME}.%d{yyyy-MM-dd}-timecost.%i.log">
+            <PatternLayout pattern="${LogPattern}" />
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100 MB" />
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+            <DefaultRolloverStrategy min="1" max="20" fileIndex="max" />
+        </RollingRandomAccessFile>
+    </appenders>
+    <loggers>
+		<asyncLogger name="org.springframework" level="info"  additivity="true" includeLocation="false"/>
+        <!--        <asyncLogger name="druid.sql.Statement" level="debug"  additivity="true" includeLocation="false"/>-->
+        <asyncLogger name="org.apache.http.wire" level="info" additivity="true" includeLocation="false" />
+        <asyncLogger name="Info.logger" level="info" additivity="false" includeLocation="false">
+            <appender-ref ref="InfoFileAppender"/>
+        </asyncLogger>
+        <asyncLogger name="Timecost.logger" level="info" additivity="false" includeLocation="false">
+            <appender-ref ref="TimecostAppender"/>
+        </asyncLogger>
+
+        <!-- Async Root Logger -->
+        <asyncRoot level="debug" includeLocation="false">
+            <appender-ref ref="InfoFileAppender" />
+            <!-- 控制台输出生产环境请关闭 -->
+            <appender-ref ref="ConsoleAppender" />
+        </asyncRoot>
+    </loggers>
+
+</configuration>
